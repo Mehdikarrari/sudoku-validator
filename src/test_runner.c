@@ -1,5 +1,5 @@
 #include "test_runner.h"
-#include "validator_single.h"
+#include "validator_pthread.h"
 #include "io.h"
 #include <stdio.h>
 #include <time.h>
