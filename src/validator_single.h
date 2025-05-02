@@ -6,5 +6,10 @@
 #include <unistd.h>
 
 bool validate_sudoku(int sudoku[9][9]);
+bool validate_thread[19] = {true};
+struct args{
+    int sudoku[9][9];
+    int i;
+};
 
 #endif

@@ -1,20 +1,20 @@
 #include "validator_single.h"
 
-bool check_row(int sudoku[9][9], int row) {
+void* check_row(int sudoku[9][9], int row) {
     bool seen[10] = { false };
     for (int i = 0; i < 9; i++) {
         int num = sudoku[row][i];
-        if (num < 1 || num > 9 || seen[num]) return false;
+        if (num < 1 || num > 9 || seen[num]) {validate_thread[row] = false; return;}
         seen[num] = true;
     }
     return true;
 }
 
-bool check_col(int sudoku[9][9], int col) {
+void* check_col(int sudoku[9][9], int col) {
     bool seen[10] = { false };
     for (int i = 0; i < 9; i++) {
         int num = sudoku[i][col];
-        if (num < 1 || num > 9 || seen[num]) return false;
+        if (num < 1 || num > 9 || seen[num]) {validate_thread[col + 9] = false; return;}
         seen[num] = true;
     }
     return true;
@@ -31,8 +31,18 @@ bool check_grid(int sudoku[9][9], int startRow, int startCol) {
     }
     return true;
 }
-
+void* grid_thread(void* arg) {
+    for (int i = 0; i < 9; i += 3) {
+        for (int j = 0; j < 9; j += 3) {
+            if (!check_grid(arg, i, j)) {
+                validate_thread[18] = false; 
+                return;
+            }
+        }
+    }
+}
 bool validate_sudoku(int sudoku[9][9]) {
+    pthread_t threads [19];
     for (int i = 0; i < 9; i++) {
         if (!check_row(sudoku, i) || !check_col(sudoku, i))
             return false;
